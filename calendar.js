@@ -1,80 +1,35 @@
-// Get event date
+// Get events
 var list = document.getElementsByClassName("date");
 var eventDate = [];
 var i = 0;
 while(list[i])
 {
-	eventDate.push(new Date(Date.parse(list[i].innerText)));
+	const eventDateString = new Date(Date.parse(list[i].innerText));
+	const eventNode = list[i].nextElementSibling.cloneNode(true);
+	const eventRepeate = list[i].nextElementSibling.nextElementSibling.innerHTML;
+	eventDate.push([eventDateString, eventNode]);
+	if(eventRepeate != 0)
+	{
+		const repeateDates = eventRepeate.split(";");
+		repeateDates.forEach(function(repeateDate){
+			const repeateDateSplit = repeateDate.split(".");
+			const eventRepeateDate = new Date(Date.parse(repeateDateSplit[2] + "-" + repeateDateSplit[1] + "-" + repeateDateSplit[0]));
+			const repeateEventNode = eventNode.cloneNode(true);
+			repeateEventNode.getElementsByClassName("h5")[0].innerHTML = repeateDateSplit[0];
+			repeateEventNode.getElementsByClassName("h5")[2].innerHTML = repeateDateSplit[1];
+			repeateEventNode.getElementsByClassName("h5")[4].innerHTML = repeateDateSplit[2];
+			if(repeateDateSplit[3])
+			{
+				repeateEventNode.getElementsByClassName("h5")[5].innerHTML = repeateDateSplit[3];
+			}
+			else{
+				repeateEventNode.getElementsByClassName("h5")[5].innerHTML = "";
+			}
+			eventDate.push([eventRepeateDate, repeateEventNode]);
+		});
+	}
 	i++;
 }
-// TestDevLab school
-eventDate.push(new Date(2020, 8, 21));
-eventDate.push(new Date(2020, 8, 22));
-eventDate.push(new Date(2020, 8, 23));
-eventDate.push(new Date(2020, 8, 24));
-eventDate.push(new Date(2020, 8, 25));
-eventDate.push(new Date(2020, 8, 28));
-eventDate.push(new Date(2020, 8, 29));
-eventDate.push(new Date(2020, 8, 30));
-eventDate.push(new Date(2020, 9, 1));
-eventDate.push(new Date(2020, 9, 2));
-// 3D Game webinars
-eventDate.push(new Date(2020, 8, 12));
-eventDate.push(new Date(2020, 8, 15));
-eventDate.push(new Date(2020, 8, 17));
-// Game challenge registration
-eventDate.push(new Date(2021, 2, 1));
-eventDate.push(new Date(2021, 2, 2));
-eventDate.push(new Date(2021, 2, 3));
-eventDate.push(new Date(2021, 2, 4));
-eventDate.push(new Date(2021, 2, 5));
-eventDate.push(new Date(2021, 2, 6));
-eventDate.push(new Date(2021, 2, 7));
-eventDate.push(new Date(2021, 2, 8));
-eventDate.push(new Date(2021, 2, 9));
-eventDate.push(new Date(2021, 2, 10));
-eventDate.push(new Date(2021, 2, 11));
-eventDate.push(new Date(2021, 2, 12));
-eventDate.push(new Date(2021, 2, 13));
-eventDate.push(new Date(2021, 2, 14));
-// Game challenge
-eventDate.push(new Date(2021, 2, 16));
-eventDate.push(new Date(2021, 2, 17));
-eventDate.push(new Date(2021, 2, 18));
-eventDate.push(new Date(2021, 2, 19));
-eventDate.push(new Date(2021, 2, 20));
-eventDate.push(new Date(2021, 2, 21));
-eventDate.push(new Date(2021, 2, 22));
-eventDate.push(new Date(2021, 2, 23));
-eventDate.push(new Date(2021, 2, 24));
-eventDate.push(new Date(2021, 2, 25));
-eventDate.push(new Date(2021, 2, 26));
-eventDate.push(new Date(2021, 2, 27));
-eventDate.push(new Date(2021, 2, 28));
-eventDate.push(new Date(2021, 2, 29));
-eventDate.push(new Date(2021, 2, 30));
-// Digital kick
-eventDate.push(new Date(2021, 3, 5));
-eventDate.push(new Date(2021, 3, 6));
-eventDate.push(new Date(2021, 3, 7));
-eventDate.push(new Date(2021, 3, 8));
-eventDate.push(new Date(2021, 3, 9));
-eventDate.push(new Date(2021, 3, 12));
-eventDate.push(new Date(2021, 3, 13));
-eventDate.push(new Date(2021, 3, 14));
-eventDate.push(new Date(2021, 3, 15));
-eventDate.push(new Date(2021, 3, 16));
-eventDate.push(new Date(2021, 3, 19));
-eventDate.push(new Date(2021, 3, 20));
-eventDate.push(new Date(2021, 3, 21));
-eventDate.push(new Date(2021, 3, 22));
-eventDate.push(new Date(2021, 3, 23));
-eventDate.push(new Date(2021, 3, 26));
-eventDate.push(new Date(2021, 3, 27));
-eventDate.push(new Date(2021, 3, 28));
-eventDate.push(new Date(2021, 3, 29));
-
-
 // Calendar
 window.onload = function()
 {
@@ -89,7 +44,7 @@ window.onload = function()
 	const renderCalendar = () =>
 	{
 		const month = date.getMonth();
-		date.setDate(1);  // Date to first date
+		date.setDate(1);
 		const monthDays = document.querySelector(".days");
 		const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 		const firstDayIndex = date.getDay();
@@ -126,20 +81,20 @@ window.onload = function()
 		let nextEvents = [];
 		for (let i = 0; i < eventDate.length; i++)
 		{
-			if(eventDate[i].getFullYear() == selectedYear && eventDate[i].getMonth() == selectedMonth - 1 && eventDate[i].getDate() > prevLastDay - prevDays)
+			if(eventDate[i][0].getFullYear() == selectedYear && eventDate[i][0].getMonth() == selectedMonth - 1 && eventDate[i][0].getDate() > prevLastDay - prevDays)
 			{
-				prevEvents.push(eventDate[i].getDate());
+				prevEvents.push(eventDate[i][0].getDate());
 			}
-			else if(eventDate[i].getFullYear() == selectedYear && eventDate[i].getMonth() == selectedMonth)
+			else if(eventDate[i][0].getFullYear() == selectedYear && eventDate[i][0].getMonth() == selectedMonth)
 			{
-				events.push(eventDate[i].getDate());
+				events.push(eventDate[i][0].getDate());
 			}
-			else if (eventDate[i].getFullYear() == selectedYear && eventDate[i].getMonth() == selectedMonth + 1 && eventDate[i].getDate() < nextDays)
+			else if (eventDate[i][0].getFullYear() == selectedYear && eventDate[i][0].getMonth() == selectedMonth + 1 && eventDate[i][0].getDate() < nextDays)
 			{
-				nextEvents.push(eventDate[i].getDate());
+				nextEvents.push(eventDate[i][0].getDate());
 			}
 		}
-		//End Actual events list
+
 		document.querySelector(".cal-date h3").innerHTML = months[date.getMonth()];
 		document.querySelector(".cal-date p").innerHTML = date.getFullYear().toString();
 		let days = "";
@@ -161,7 +116,8 @@ window.onload = function()
 		}
 		for(let i = 1 ; i<=lastDay; i++)
 		{
-			if(i === today.getDate() && today.getMonth() === selectedMonth)
+
+			if(i === today.getDate() && today.getMonth() === selectedMonth && today.getFullYear() === selectedYear)
 			{
 				days+= `<div class="today actual day">${i}</div>`;
 			}
@@ -206,7 +162,6 @@ window.onload = function()
 			}
 		}
 		// Date choose
-		let selected = "";
 		let day = document.querySelectorAll(".actual");
 		for (let i = 0; i < day.length; i++)
 		{
@@ -223,396 +178,8 @@ window.onload = function()
 					selectedDate = i + 1;
 					selectedMonth = date.getMonth() + 1;
 					date.setDate(selectedDate);
-					selected = selectedYear + '-';
-					if(selectedMonth < 10)
-					{
-						selected = selected + '0' + selectedMonth + '-';
-					}
-					else
-					{
-						selected = selected + selectedMonth + '-';
-					}
-					if(selectedDate < 10)
-					{
-						selected = selected + '0' + selectedDate;
-					}
-					else
-					{
-						selected = selected + selectedDate;
-					}
-					// Search for items to display
-					// If manual dates
-					if(selected == '2020-09-21' || selected == '2020-09-22' || selected == '2020-09-23' || selected == '2020-09-24' || selected == '2020-09-25'
-					|| selected == '2020-09-28' || selected == '2020-09-29' || selected == '2020-09-30' || selected == '2020-10-01' || selected == '2020-10-02'
-					|| selected == '2020-09-12' || selected == '2020-09-15' || selected == '2020-09-17' || selected == '2021-03-01' || selected == '2021-03-02'
-				  || selected == '2021-03-03' || selected == '2021-03-04' || selected == '2021-03-05' || selected == '2021-03-06' || selected == '2021-03-07'
-				  || selected == '2021-03-08' || selected == '2021-03-09' || selected == '2021-03-10' || selected == '2021-03-11' || selected == '2021-03-12'
-				  || selected == '2021-03-13' || selected == '2021-03-14' || selected == '2021-03-16' || selected == '2021-03-17' || selected == '2021-03-18'
-				  || selected == '2021-03-19' || selected == '2021-03-20' || selected == '2021-03-21' || selected == '2021-03-22' || selected == '2021-03-23'
-				  || selected == '2021-03-24' || selected == '2021-03-25' || selected == '2021-03-26' || selected == '2021-03-27' || selected == '2021-03-28'
-				  || selected == '2021-03-29' || selected == '2021-03-30' || selected == '2021-04-06' || selected == '2021-04-07' || selected == '2021-04-08'
-				  || selected == '2021-04-09' || selected == '2021-04-12' || selected == '2021-04-13' || selected == '2021-04-14' || selected == '2021-04-15'
-				  || selected == '2021-04-16' || selected == '2021-04-19' || selected == '2021-04-20' || selected == '2021-04-21' || selected == '2021-04-22'
-  				|| selected == '2021-04-23' || selected == '2021-04-26' || selected == '2021-04-27' || selected == '2021-04-28' || selected == '2021-04-29'
-				  || selected == '2021-04-05')
-					{
-						if(selected == '2020-09-12' || selected == '2020-09-15' || selected == '2020-09-17')
-						{
-							selected = '2020-09-19';
-							let eventList = document.getElementById("source").getElementsByClassName("date");
-							let j = 0;
-							while (eventList[j] || j < eventList.lenght)
-							{
-								if (eventList[j].innerText == selected)
-								{
-									break;
-								}
-								else
-								{
-									j++;
-								}
-							}
-							// Display items
-							let slot1 = document.getElementById("slot1");
-							let slot2 = document.getElementById("slot2");
-							if(slot1.firstChild)
-							{
-								slot1.firstElementChild.remove();
-							}
-							if(slot2.firstChild)
-							{
-								slot2.firstElementChild.remove();
-							}
-							if(eventList.length > j)
-							{
-								slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-							}
-						}
-						else if(selected == '2020-10-02')
-							{
-								let eventList = document.getElementById("source").getElementsByClassName("date");
-								let j = 0;
-								while (eventList[j] || j < eventList.lenght)
-								{
-									if (eventList[j].innerText == selected)
-									{
-										break;
-									}
-									else
-									{
-										j++;
-									}
-								}
-								// Display items
-								let slot1 = document.getElementById("slot1");
-								let slot2 = document.getElementById("slot2");
-								if(slot1.firstChild)
-								{
-									slot1.firstElementChild.remove();
-								}
-								if(slot2.firstChild)
-								{
-									slot2.firstElementChild.remove();
-								}
-								if(eventList.length > j)
-								{
-									slot2.appendChild(eventList[j].nextSibling.cloneNode(true));
-								}
-								selected = '2020-09-21';
-									j = 0;
-									while (eventList[j] || j < eventList.lenght)
-									{
-										if (eventList[j].innerText == selected)
-										{
-											break;
-										}
-										else
-										{
-											j++;
-										}
-									}
-									// Display items
-									if(eventList.length > j)
-									{
-										slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-									}
-							}
-							else if(selected == '2021-04-06' || selected == '2021-04-07' || selected == '2021-04-08'
-						  || selected == '2021-04-09' || selected == '2021-04-12' || selected == '2021-04-13' || selected == '2021-04-14' || selected == '2021-04-15'
-						  || selected == '2021-04-16' || selected == '2021-04-19' || selected == '2021-04-20' || selected == '2021-04-21' || selected == '2021-04-22'
-		  				|| selected == '2021-04-23' || selected == '2021-04-26' || selected == '2021-04-27' || selected == '2021-04-28' || selected == '2021-04-29'
-						  || selected == '2021-04-05')
-							{
-								if(selected == '2021-04-08')
-								{
-									let eventList = document.getElementById("source").getElementsByClassName("date");
-									let j = 0;
-									while (eventList[j] || j < eventList.lenght)
-									{
-										if (eventList[j].innerText == selected)
-										{
-											break;
-										}
-										else
-										{
-											j++;
-										}
-									}
-									// Display items
-									let slot1 = document.getElementById("slot1");
-									let slot2 = document.getElementById("slot2");
-									if(slot1.firstChild)
-									{
-										slot1.firstElementChild.remove();
-									}
-									if(slot2.firstChild)
-									{
-										slot2.firstElementChild.remove();
-									}
-									if(eventList.length > j)
-									{
-										slot2.appendChild(eventList[j].nextSibling.cloneNode(true));
-									}
-									selected = '2021-04-30';
-										j = 0;
-										while (eventList[j] || j < eventList.lenght)
-										{
-											if (eventList[j].innerText == selected)
-											{
-												break;
-											}
-											else
-											{
-												j++;
-											}
-										}
-										// Display items
-										if(eventList.length > j)
-										{
-											slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-										}
-								}
-								else if (selected == '2021-04-09') {
-									let eventList = document.getElementById("source").getElementsByClassName("date");
-									let j = 0;
-									while (eventList[j] || j < eventList.lenght)
-									{
-										if (eventList[j].innerText == selected)
-										{
-											break;
-										}
-										else
-										{
-											j++;
-										}
-									}
-									// Display items
-									let slot1 = document.getElementById("slot1");
-									let slot2 = document.getElementById("slot2");
-									if(slot1.firstChild)
-									{
-										slot1.firstElementChild.remove();
-									}
-									if(slot2.firstChild)
-									{
-										slot2.firstElementChild.remove();
-									}
-									if(eventList.length > j)
-									{
-										slot2.appendChild(eventList[j].nextSibling.cloneNode(true));
-									}
-									selected = '2021-04-30';
-										j = 0;
-										while (eventList[j] || j < eventList.lenght)
-										{
-											if (eventList[j].innerText == selected)
-											{
-												break;
-											}
-											else
-											{
-												j++;
-											}
-										}
-										// Display items
-										if(eventList.length > j)
-										{
-											slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-										}
-								}
-								else
-								{
-									selected = '2021-04-30';
-									let eventList = document.getElementById("source").getElementsByClassName("date");
-									let j = 0;
-									while (eventList[j] || j < eventList.lenght)
-									{
-										if (eventList[j].innerText == selected)
-										{
-											break;
-										}
-										else
-										{
-											j++;
-										}
-									}
-									// Display items
-									let slot1 = document.getElementById("slot1");
-									let slot2 = document.getElementById("slot2");
-									if(slot1.firstChild)
-									{
-										slot1.firstElementChild.remove();
-									}
-									if(slot2.firstChild)
-									{
-										slot2.firstElementChild.remove();
-									}
-									if(eventList.length > j)
-									{
-										slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-									}
-								}
-							}
-							else if(selected == '2021-03-01' || selected == '2021-03-02'
-						  || selected == '2021-03-03' || selected == '2021-03-04' || selected == '2021-03-05' || selected == '2021-03-06' || selected == '2021-03-07'
-						  || selected == '2021-03-08' || selected == '2021-03-09' || selected == '2021-03-10' || selected == '2021-03-11' || selected == '2021-03-12'
-						  || selected == '2021-03-13' || selected == '2021-03-14')
-							{
-								selected = '2021-03-15';
-								let eventList = document.getElementById("source").getElementsByClassName("date");
-								let j = 0;
-								while (eventList[j] || j < eventList.lenght)
-								{
-									if (eventList[j].innerText == selected)
-									{
-										break;
-									}
-									else
-									{
-										j++;
-									}
-								}
-								// Display items
-								let slot1 = document.getElementById("slot1");
-								let slot2 = document.getElementById("slot2");
-								if(slot1.firstChild)
-								{
-									slot1.firstElementChild.remove();
-								}
-								if(slot2.firstChild)
-								{
-									slot2.firstElementChild.remove();
-								}
-								if(eventList.length > j)
-								{
-									slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-								}
-							}
-							else if(selected == '2021-03-16' || selected == '2021-03-17' || selected == '2021-03-18'
-						  || selected == '2021-03-19' || selected == '2021-03-20' || selected == '2021-03-21' || selected == '2021-03-22' || selected == '2021-03-23'
-						  || selected == '2021-03-24' || selected == '2021-03-25' || selected == '2021-03-26' || selected == '2021-03-27' || selected == '2021-03-28'
-						  || selected == '2021-03-29' || selected == '2021-03-30')
-							{
-									selected = '2021-03-31';
-									let eventList = document.getElementById("source").getElementsByClassName("date");
-									let j = 0;
-									while (eventList[j] || j < eventList.lenght)
-									{
-										if (eventList[j].innerText == selected)
-										{
-											break;
-										}
-										else
-										{
-											j++;
-										}
-									}
-									// Display items
-									let slot1 = document.getElementById("slot1");
-									let slot2 = document.getElementById("slot2");
-									if(slot1.firstChild)
-									{
-										slot1.firstElementChild.remove();
-									}
-									if(slot2.firstChild)
-									{
-										slot2.firstElementChild.remove();
-									}
-									if(eventList.length > j)
-									{
-										slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-									}
-						  }
-							else
-							{
-								selected = '2020-09-21';
-								let eventList = document.getElementById("source").getElementsByClassName("date");
-								let j = 0;
-								while (eventList[j] || j < eventList.lenght)
-								{
-									if (eventList[j].innerText == selected)
-									{
-										break;
-									}
-									else
-									{
-										j++;
-									}
-								}
-								// Display items
-								let slot1 = document.getElementById("slot1");
-								let slot2 = document.getElementById("slot2");
-								if(slot1.firstChild)
-								{
-									slot1.firstElementChild.remove();
-								}
-								if(slot2.firstChild)
-								{
-									slot2.firstElementChild.remove();
-								}
-								if(eventList.length > j)
-								{
-									slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-								}
-							}
-					}
-					else
-					{
-						let eventList = document.getElementById("source").getElementsByClassName("date");
-						let j = 0;
-						while (eventList[j] || j < eventList.lenght)
-						{
-							if (eventList[j].innerText == selected)
-							{
-								break;
-							}
-							else
-							{
-								j++;
-							}
-						}
-						// Display items
-						let slot1 = document.getElementById("slot1");
-						let slot2 = document.getElementById("slot2");
-						if(slot1.firstChild)
-						{
-							slot1.firstElementChild.remove();
-						}
-						if(slot2.firstChild)
-						{
-							slot2.firstElementChild.remove();
-						}
-						if(eventList.length > j)
-						{
+					displayEvent(date);
 
-							slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-							j++;
-						}
-						if(eventList.length > j && eventList[j].innerHTML == selected)
-						{
-							slot2.appendChild(eventList[j].nextSibling.cloneNode(true));
-						}
-					}
 				}
 			});
 		}
@@ -623,409 +190,19 @@ window.onload = function()
 			{
 				if(e.target.className.includes("event"))
 				{
+					selectedMonth = date.getMonth() - 1;
+					date.setMonth(selectedMonth);
 					selectedDate = parseInt(prevDay[i].id);
-					selectedMonth = date.getMonth();
-					selectedYear = date.getFullYear();
 					date.setDate(selectedDate);
-					date.setFullYear(selectedYear);
-					selected = selectedYear + '-';
-					selectedElementDate = selectedDate;
-					if(selectedMonth < 10)
-					{
-						selected = selected + '0' + selectedMonth + '-';
-					}
-					else
-					{
-						selected = selected + selectedMonth + '-';
-					}
-					if(selectedDate < 10)
-					{
-						selected = selected + '0' + selectedDate;
-					}
-					else
-					{
-						selected = selected + selectedDate;
-					}
-					// Search for items to display
-					// If manual dates
-					if(selected == '2020-09-21' || selected == '2020-09-22' || selected == '2020-09-23' || selected == '2020-09-24' || selected == '2020-09-25'
-					|| selected == '2020-09-28' || selected == '2020-09-29' || selected == '2020-09-30' || selected == '2020-10-01' || selected == '2020-10-02'
-					|| selected == '2020-09-12' || selected == '2020-09-15' || selected == '2020-09-17' || selected == '2021-03-01' || selected == '2021-03-02'
-				  || selected == '2021-03-03' || selected == '2021-03-04' || selected == '2021-03-05' || selected == '2021-03-06' || selected == '2021-03-07'
-				  || selected == '2021-03-08' || selected == '2021-03-09' || selected == '2021-03-10' || selected == '2021-03-11' || selected == '2021-03-12'
-				  || selected == '2021-03-13' || selected == '2021-03-14' || selected == '2021-03-16' || selected == '2021-03-17' || selected == '2021-03-18'
-				  || selected == '2021-03-19' || selected == '2021-03-20' || selected == '2021-03-21' || selected == '2021-03-22' || selected == '2021-03-23'
-				  || selected == '2021-03-24' || selected == '2021-03-25' || selected == '2021-03-26' || selected == '2021-03-27' || selected == '2021-03-28'
-				  || selected == '2021-03-29' || selected == '2021-03-30' || selected == '2021-04-06' || selected == '2021-04-07' || selected == '2021-04-08'
-				  || selected == '2021-04-09' || selected == '2021-04-12' || selected == '2021-04-13' || selected == '2021-04-14' || selected == '2021-04-15'
-				  || selected == '2021-04-16' || selected == '2021-04-19' || selected == '2021-04-20' || selected == '2021-04-21' || selected == '2021-04-22'
-  				|| selected == '2021-04-23' || selected == '2021-04-26' || selected == '2021-04-27' || selected == '2021-04-28' || selected == '2021-04-29'
-				  || selected == '2021-04-05')
-					{
-						if(selected == '2020-09-12' || selected == '2020-09-15' || selected == '2020-09-17')
-						{
-							selected = '2020-09-19';
-							let eventList = document.getElementById("source").getElementsByClassName("date");
-							let j = 0;
-							while (eventList[j] || j < eventList.lenght)
-							{
-								if (eventList[j].innerText == selected)
-								{
-									break;
-								}
-								else
-								{
-									j++;
-								}
-							}
-							// Display items
-							let slot1 = document.getElementById("slot1");
-							let slot2 = document.getElementById("slot2");
-							if(slot1.firstChild)
-							{
-								slot1.firstElementChild.remove();
-							}
-							if(slot2.firstChild)
-							{
-								slot2.firstElementChild.remove();
-							}
-							if(eventList.length > j)
-							{
-								slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-							}
-						}
-						else if(selected == '2020-10-02')
-							{
-								let eventList = document.getElementById("source").getElementsByClassName("date");
-								let j = 0;
-								while (eventList[j] || j < eventList.lenght)
-								{
-									if (eventList[j].innerText == selected)
-									{
-										break;
-									}
-									else
-									{
-										j++;
-									}
-								}
-								// Display items
-								let slot1 = document.getElementById("slot1");
-								let slot2 = document.getElementById("slot2");
-								if(slot1.firstChild)
-								{
-									slot1.firstElementChild.remove();
-								}
-								if(slot2.firstChild)
-								{
-									slot2.firstElementChild.remove();
-								}
-								if(eventList.length > j)
-								{
-									slot2.appendChild(eventList[j].nextSibling.cloneNode(true));
-								}
-								selected = '2020-09-21';
-									j = 0;
-									while (eventList[j] || j < eventList.lenght)
-									{
-										if (eventList[j].innerText == selected)
-										{
-											break;
-										}
-										else
-										{
-											j++;
-										}
-									}
-									// Display items
-									if(eventList.length > j)
-									{
-										slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-									}
-							}
-							else if(selected == '2021-03-01' || selected == '2021-03-02'
-							|| selected == '2021-03-03' || selected == '2021-03-04' || selected == '2021-03-05' || selected == '2021-03-06' || selected == '2021-03-07'
-							|| selected == '2021-03-08' || selected == '2021-03-09' || selected == '2021-03-10' || selected == '2021-03-11' || selected == '2021-03-12'
-							|| selected == '2021-03-13' || selected == '2021-03-14')
-							{
-								selected = '2021-03-15';
-								let eventList = document.getElementById("source").getElementsByClassName("date");
-								let j = 0;
-								while (eventList[j] || j < eventList.lenght)
-								{
-									if (eventList[j].innerText == selected)
-									{
-										break;
-									}
-									else
-									{
-										j++;
-									}
-								}
-								// Display items
-								let slot1 = document.getElementById("slot1");
-								let slot2 = document.getElementById("slot2");
-								if(slot1.firstChild)
-								{
-									slot1.firstElementChild.remove();
-								}
-								if(slot2.firstChild)
-								{
-									slot2.firstElementChild.remove();
-								}
-								if(eventList.length > j)
-								{
-									slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-								}
-							}
-							else if(selected == '2021-04-06' || selected == '2021-04-07' || selected == '2021-04-08'
-							|| selected == '2021-04-09' || selected == '2021-04-12' || selected == '2021-04-13' || selected == '2021-04-14' || selected == '2021-04-15'
-							|| selected == '2021-04-16' || selected == '2021-04-19' || selected == '2021-04-20' || selected == '2021-04-21' || selected == '2021-04-22'
-							|| selected == '2021-04-23' || selected == '2021-04-26' || selected == '2021-04-27' || selected == '2021-04-28' || selected == '2021-04-29'
-							|| selected == '2021-04-05')
-							{
-								if(selected == '2021-04-08')
-								{
-									let eventList = document.getElementById("source").getElementsByClassName("date");
-									let j = 0;
-									while (eventList[j] || j < eventList.lenght)
-									{
-										if (eventList[j].innerText == selected)
-										{
-											break;
-										}
-										else
-										{
-											j++;
-										}
-									}
-									// Display items
-									let slot1 = document.getElementById("slot1");
-									let slot2 = document.getElementById("slot2");
-									if(slot1.firstChild)
-									{
-										slot1.firstElementChild.remove();
-									}
-									if(slot2.firstChild)
-									{
-										slot2.firstElementChild.remove();
-									}
-									if(eventList.length > j)
-									{
-										slot2.appendChild(eventList[j].nextSibling.cloneNode(true));
-									}
-									selected = '2021-04-30';
-										j = 0;
-										while (eventList[j] || j < eventList.lenght)
-										{
-											if (eventList[j].innerText == selected)
-											{
-												break;
-											}
-											else
-											{
-												j++;
-											}
-										}
-										// Display items
-										if(eventList.length > j)
-										{
-											slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-										}
-								}
-								else if (selected == '2021-04-09') {
-									let eventList = document.getElementById("source").getElementsByClassName("date");
-									let j = 0;
-									while (eventList[j] || j < eventList.lenght)
-									{
-										if (eventList[j].innerText == selected)
-										{
-											break;
-										}
-										else
-										{
-											j++;
-										}
-									}
-									// Display items
-									let slot1 = document.getElementById("slot1");
-									let slot2 = document.getElementById("slot2");
-									if(slot1.firstChild)
-									{
-										slot1.firstElementChild.remove();
-									}
-									if(slot2.firstChild)
-									{
-										slot2.firstElementChild.remove();
-									}
-									if(eventList.length > j)
-									{
-										slot2.appendChild(eventList[j].nextSibling.cloneNode(true));
-									}
-									selected = '2021-04-30';
-										j = 0;
-										while (eventList[j] || j < eventList.lenght)
-										{
-											if (eventList[j].innerText == selected)
-											{
-												break;
-											}
-											else
-											{
-												j++;
-											}
-										}
-										// Display items
-										if(eventList.length > j)
-										{
-											slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-										}
-								}
-								else
-								{
-									selected = '2021-04-30';
-									let eventList = document.getElementById("source").getElementsByClassName("date");
-									let j = 0;
-									while (eventList[j] || j < eventList.lenght)
-									{
-										if (eventList[j].innerText == selected)
-										{
-											break;
-										}
-										else
-										{
-											j++;
-										}
-									}
-									// Display items
-									let slot1 = document.getElementById("slot1");
-									let slot2 = document.getElementById("slot2");
-									if(slot1.firstChild)
-									{
-										slot1.firstElementChild.remove();
-									}
-									if(slot2.firstChild)
-									{
-										slot2.firstElementChild.remove();
-									}
-									if(eventList.length > j)
-									{
-										slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-									}
-								}
-							}
-							else if(selected == '2021-03-16' || selected == '2021-03-17' || selected == '2021-03-18'
-							|| selected == '2021-03-19' || selected == '2021-03-20' || selected == '2021-03-21' || selected == '2021-03-22' || selected == '2021-03-23'
-							|| selected == '2021-03-24' || selected == '2021-03-25' || selected == '2021-03-26' || selected == '2021-03-27' || selected == '2021-03-28'
-							|| selected == '2021-03-29' || selected == '2021-03-30')
-							{
-									selected = '2021-03-31';
-									let eventList = document.getElementById("source").getElementsByClassName("date");
-									let j = 0;
-									while (eventList[j] || j < eventList.lenght)
-									{
-										if (eventList[j].innerText == selected)
-										{
-											break;
-										}
-										else
-										{
-											j++;
-										}
-									}
-									// Display items
-									let slot1 = document.getElementById("slot1");
-									let slot2 = document.getElementById("slot2");
-									if(slot1.firstChild)
-									{
-										slot1.firstElementChild.remove();
-									}
-									if(slot2.firstChild)
-									{
-										slot2.firstElementChild.remove();
-									}
-									if(eventList.length > j)
-									{
-										slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-									}
-						  }
-							else
-							{
-								selected = '2020-09-21';
-								let eventList = document.getElementById("source").getElementsByClassName("date");
-								let j = 0;
-								while (eventList[j] || j < eventList.lenght)
-								{
-									if (eventList[j].innerText == selected)
-									{
-										break;
-									}
-									else
-									{
-										j++;
-									}
-								}
-								// Display items
-								let slot1 = document.getElementById("slot1");
-								let slot2 = document.getElementById("slot2");
-								if(slot1.firstChild)
-								{
-									slot1.firstElementChild.remove();
-								}
-								if(slot2.firstChild)
-								{
-									slot2.firstElementChild.remove();
-								}
-								if(eventList.length > j)
-								{
-									slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-								}
-							}
-					}
-					else
-					{
-						let eventList = document.getElementById("source").getElementsByClassName("date");
-						let j = 0;
-						while (eventList[j] || j < eventList.lenght)
-						{
-							if (eventList[j].innerText == selected)
-							{
-								break;
-							}
-							else
-							{
-								j++;
-							}
-						}
-						// Display items
-						let slot1 = document.getElementById("slot1");
-						let slot2 = document.getElementById("slot2");
-						if(slot1.firstChild)
-						{
-							slot1.firstElementChild.remove();
-						}
-						if(slot2.firstChild)
-						{
-							slot2.firstElementChild.remove();
-						}
-						if(eventList.length > j)
-						{
-
-							slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-							j++;
-						}
-						if(eventList.length > j && eventList[j].innerHTML == selected)
-						{
-							slot2.appendChild(eventList[j].nextSibling.cloneNode(true));
-						}
-					}
+					selectedYear = date.getFullYear();
+					displayEvent(date);
 					if(selectedDate == 31)
 					 {
 						date.setDate(30);
-						date.setMonth(date.getMonth() - 1);
-
 					 }
-					document.querySelector(".back").click();
+					 date.setMonth(selectedMonth + 1);
+					 selectedElementDate = selectedDate;
+					 document.querySelector(".back").click();
 				}
 			});
 		}
@@ -1037,401 +214,12 @@ window.onload = function()
 				if(e.target.className.includes("event"))
 				{
 					selectedDate = i + 1;
-					selectedMonth = date.getMonth() + 2;
-					selectedYear = date.getFullYear();
+					selectedMonth = date.getMonth() + 1;
 					date.setDate(selectedDate);
-					date.setFullYear(selectedYear);
-					selected = selectedYear + '-';
+					date.setMonth(selectedMonth);
+					displayEvent(date);
+					date.setMonth(selectedMonth - 1);
 					selectedElementDate = selectedDate;
-					if(selectedMonth < 10)
-					{
-						selected = selected + '0' + selectedMonth + '-';
-					}
-					else
-					{
-						selected = selected + selectedMonth + '-';
-					}
-					if(selectedDate < 10)
-					{
-						selected = selected + '0' + selectedDate;
-					}
-					else
-					{
-						selected = selected + selectedDate;
-					}
-					// Search for items to display
-					// If manual dates
-					if(selected == '2020-09-21' || selected == '2020-09-22' || selected == '2020-09-23' || selected == '2020-09-24' || selected == '2020-09-25'
-					|| selected == '2020-09-28' || selected == '2020-09-29' || selected == '2020-09-30' || selected == '2020-10-01' || selected == '2020-10-02'
-					|| selected == '2020-09-12' || selected == '2020-09-15' || selected == '2020-09-17' || selected == '2021-03-01' || selected == '2021-03-02'
-				  || selected == '2021-03-03' || selected == '2021-03-04' || selected == '2021-03-05' || selected == '2021-03-06' || selected == '2021-03-07'
-				  || selected == '2021-03-08' || selected == '2021-03-09' || selected == '2021-03-10' || selected == '2021-03-11' || selected == '2021-03-12'
-				  || selected == '2021-03-13' || selected == '2021-03-14' || selected == '2021-03-16' || selected == '2021-03-17' || selected == '2021-03-18'
-				  || selected == '2021-03-19' || selected == '2021-03-20' || selected == '2021-03-21' || selected == '2021-03-22' || selected == '2021-03-23'
-				  || selected == '2021-03-24' || selected == '2021-03-25' || selected == '2021-03-26' || selected == '2021-03-27' || selected == '2021-03-28'
-				  || selected == '2021-03-29' || selected == '2021-03-30' || selected == '2021-04-06' || selected == '2021-04-07' || selected == '2021-04-08'
-				  || selected == '2021-04-09' || selected == '2021-04-12' || selected == '2021-04-13' || selected == '2021-04-14' || selected == '2021-04-15'
-				  || selected == '2021-04-16' || selected == '2021-04-19' || selected == '2021-04-20' || selected == '2021-04-21' || selected == '2021-04-22'
-  				|| selected == '2021-04-23' || selected == '2021-04-26' || selected == '2021-04-27' || selected == '2021-04-28' || selected == '2021-04-29'
-				  || selected == '2021-04-05')
-					{
-						if(selected == '2020-09-12' || selected == '2020-09-15' || selected == '2020-09-17')
-						{
-							selected = '2020-09-19';
-							let eventList = document.getElementById("source").getElementsByClassName("date");
-							let j = 0;
-							while (eventList[j] || j < eventList.lenght)
-							{
-								if (eventList[j].innerText == selected)
-								{
-									break;
-								}
-								else
-								{
-									j++;
-								}
-							}
-							// Display items
-							let slot1 = document.getElementById("slot1");
-							let slot2 = document.getElementById("slot2");
-							if(slot1.firstChild)
-							{
-								slot1.firstElementChild.remove();
-							}
-							if(slot2.firstChild)
-							{
-								slot2.firstElementChild.remove();
-							}
-							if(eventList.length > j)
-							{
-								slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-							}
-						}
-						else if(selected == '2020-10-02')
-							{
-								let eventList = document.getElementById("source").getElementsByClassName("date");
-								let j = 0;
-								while (eventList[j] || j < eventList.lenght)
-								{
-									if (eventList[j].innerText == selected)
-									{
-										break;
-									}
-									else
-									{
-										j++;
-									}
-								}
-								// Display items
-								let slot1 = document.getElementById("slot1");
-								let slot2 = document.getElementById("slot2");
-								if(slot1.firstChild)
-								{
-									slot1.firstElementChild.remove();
-								}
-								if(slot2.firstChild)
-								{
-									slot2.firstElementChild.remove();
-								}
-								if(eventList.length > j)
-								{
-									slot2.appendChild(eventList[j].nextSibling.cloneNode(true));
-								}
-								selected = '2020-09-21';
-									j = 0;
-									while (eventList[j] || j < eventList.lenght)
-									{
-										if (eventList[j].innerText == selected)
-										{
-											break;
-										}
-										else
-										{
-											j++;
-										}
-									}
-									// Display items
-									if(eventList.length > j)
-									{
-										slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-									}
-							}
-							else if(selected == '2021-04-06' || selected == '2021-04-07' || selected == '2021-04-08'
-							|| selected == '2021-04-09' || selected == '2021-04-12' || selected == '2021-04-13' || selected == '2021-04-14' || selected == '2021-04-15'
-							|| selected == '2021-04-16' || selected == '2021-04-19' || selected == '2021-04-20' || selected == '2021-04-21' || selected == '2021-04-22'
-							|| selected == '2021-04-23' || selected == '2021-04-26' || selected == '2021-04-27' || selected == '2021-04-28' || selected == '2021-04-29'
-							|| selected == '2021-04-05')
-							{
-								if(selected == '2021-04-08')
-								{
-									let eventList = document.getElementById("source").getElementsByClassName("date");
-									let j = 0;
-									while (eventList[j] || j < eventList.lenght)
-									{
-										if (eventList[j].innerText == selected)
-										{
-											break;
-										}
-										else
-										{
-											j++;
-										}
-									}
-									// Display items
-									let slot1 = document.getElementById("slot1");
-									let slot2 = document.getElementById("slot2");
-									if(slot1.firstChild)
-									{
-										slot1.firstElementChild.remove();
-									}
-									if(slot2.firstChild)
-									{
-										slot2.firstElementChild.remove();
-									}
-									if(eventList.length > j)
-									{
-										slot2.appendChild(eventList[j].nextSibling.cloneNode(true));
-									}
-									selected = '2021-04-30';
-										j = 0;
-										while (eventList[j] || j < eventList.lenght)
-										{
-											if (eventList[j].innerText == selected)
-											{
-												break;
-											}
-											else
-											{
-												j++;
-											}
-										}
-										// Display items
-										if(eventList.length > j)
-										{
-											slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-										}
-								}
-								else if (selected == '2021-04-09') {
-									let eventList = document.getElementById("source").getElementsByClassName("date");
-									let j = 0;
-									while (eventList[j] || j < eventList.lenght)
-									{
-										if (eventList[j].innerText == selected)
-										{
-											break;
-										}
-										else
-										{
-											j++;
-										}
-									}
-									// Display items
-									let slot1 = document.getElementById("slot1");
-									let slot2 = document.getElementById("slot2");
-									if(slot1.firstChild)
-									{
-										slot1.firstElementChild.remove();
-									}
-									if(slot2.firstChild)
-									{
-										slot2.firstElementChild.remove();
-									}
-									if(eventList.length > j)
-									{
-										slot2.appendChild(eventList[j].nextSibling.cloneNode(true));
-									}
-									selected = '2021-04-30';
-										j = 0;
-										while (eventList[j] || j < eventList.lenght)
-										{
-											if (eventList[j].innerText == selected)
-											{
-												break;
-											}
-											else
-											{
-												j++;
-											}
-										}
-										// Display items
-										if(eventList.length > j)
-										{
-											slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-										}
-								}
-								else
-								{
-									selected = '2021-04-30';
-									let eventList = document.getElementById("source").getElementsByClassName("date");
-									let j = 0;
-									while (eventList[j] || j < eventList.lenght)
-									{
-										if (eventList[j].innerText == selected)
-										{
-											break;
-										}
-										else
-										{
-											j++;
-										}
-									}
-									// Display items
-									let slot1 = document.getElementById("slot1");
-									let slot2 = document.getElementById("slot2");
-									if(slot1.firstChild)
-									{
-										slot1.firstElementChild.remove();
-									}
-									if(slot2.firstChild)
-									{
-										slot2.firstElementChild.remove();
-									}
-									if(eventList.length > j)
-									{
-										slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-									}
-								}
-							}
-							else if(selected == '2021-03-01' || selected == '2021-03-02'
-						  || selected == '2021-03-03' || selected == '2021-03-04' || selected == '2021-03-05' || selected == '2021-03-06' || selected == '2021-03-07'
-						  || selected == '2021-03-08' || selected == '2021-03-09' || selected == '2021-03-10' || selected == '2021-03-11' || selected == '2021-03-12'
-						  || selected == '2021-03-13' || selected == '2021-03-14')
-							{
-								selected = '2021-03-15';
-								let eventList = document.getElementById("source").getElementsByClassName("date");
-								let j = 0;
-								while (eventList[j] || j < eventList.lenght)
-								{
-									if (eventList[j].innerText == selected)
-									{
-										break;
-									}
-									else
-									{
-										j++;
-									}
-								}
-								// Display items
-								let slot1 = document.getElementById("slot1");
-								let slot2 = document.getElementById("slot2");
-								if(slot1.firstChild)
-								{
-									slot1.firstElementChild.remove();
-								}
-								if(slot2.firstChild)
-								{
-									slot2.firstElementChild.remove();
-								}
-								if(eventList.length > j)
-								{
-									slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-								}
-							}
-							else if(selected == '2021-03-16' || selected == '2021-03-17' || selected == '2021-03-18'
-						  || selected == '2021-03-19' || selected == '2021-03-20' || selected == '2021-03-21' || selected == '2021-03-22' || selected == '2021-03-23'
-						  || selected == '2021-03-24' || selected == '2021-03-25' || selected == '2021-03-26' || selected == '2021-03-27' || selected == '2021-03-28'
-						  || selected == '2021-03-29' || selected == '2021-03-30')
-							{
-									selected = '2021-03-31';
-									let eventList = document.getElementById("source").getElementsByClassName("date");
-									let j = 0;
-									while (eventList[j] || j < eventList.lenght)
-									{
-										if (eventList[j].innerText == selected)
-										{
-											break;
-										}
-										else
-										{
-											j++;
-										}
-									}
-									// Display items
-									let slot1 = document.getElementById("slot1");
-									let slot2 = document.getElementById("slot2");
-									if(slot1.firstChild)
-									{
-										slot1.firstElementChild.remove();
-									}
-									if(slot2.firstChild)
-									{
-										slot2.firstElementChild.remove();
-									}
-									if(eventList.length > j)
-									{
-										slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-									}
-						  }
-							else
-							{
-								selected = '2020-09-21';
-								let eventList = document.getElementById("source").getElementsByClassName("date");
-								let j = 0;
-								while (eventList[j] || j < eventList.lenght)
-								{
-									if (eventList[j].innerText == selected)
-									{
-										break;
-									}
-									else
-									{
-										j++;
-									}
-								}
-								// Display items
-								let slot1 = document.getElementById("slot1");
-								let slot2 = document.getElementById("slot2");
-								if(slot1.firstChild)
-								{
-									slot1.firstElementChild.remove();
-								}
-								if(slot2.firstChild)
-								{
-									slot2.firstElementChild.remove();
-								}
-								if(eventList.length > j)
-								{
-									slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-								}
-							}
-					}
-					else
-					{
-						let eventList = document.getElementById("source").getElementsByClassName("date");
-						let j = 0;
-						while (eventList[j] || j < eventList.lenght)
-						{
-							if (eventList[j].innerText == selected)
-							{
-								break;
-							}
-							else
-							{
-								j++;
-							}
-						}
-						// Display items
-						let slot1 = document.getElementById("slot1");
-						let slot2 = document.getElementById("slot2");
-						if(slot1.firstChild)
-						{
-							slot1.firstElementChild.remove();
-						}
-						if(slot2.firstChild)
-						{
-							slot2.firstElementChild.remove();
-						}
-						if(eventList.length > j)
-						{
-
-							slot1.appendChild(eventList[j].nextSibling.cloneNode(true));
-							j++;
-						}
-						if(eventList.length > j && eventList[j].innerHTML == selected)
-						{
-							slot2.appendChild(eventList[j].nextSibling.cloneNode(true));
-						}
-					}
 					document.querySelector(".fwd").click();
 				}
 			});
@@ -1444,10 +232,13 @@ window.onload = function()
 		selectedMonth = date.getMonth();
 		selectedYear = date.getFullYear();
 		renderCalendar();
-
 	});
 	document.querySelector(".fwd").addEventListener("click", () =>
 	{
+		if(selectedDate == 31)
+		 {
+			date.setDate(30);
+		 }
 		date.setMonth(date.getMonth() + 1);
 		selectedMonth = date.getMonth();
 		selectedYear = date.getFullYear();
@@ -1455,3 +246,51 @@ window.onload = function()
 	});
 	renderCalendar();
 };
+
+function displayEvent(date)
+{
+	// Search for items to display
+		let j = 0;
+		while (eventDate[j] || j < eventDate.length)
+		{
+			if (eventDate[j][0].getDate() === date.getDate() && eventDate[j][0].getMonth() === date.getMonth() && eventDate[j][0].getFullYear() === date.getFullYear())
+			{
+				break;
+			}
+			else
+			{
+				j++;
+			}
+		}
+		// Display items
+		let slot1 = document.getElementById("slot1");
+		let slot2 = document.getElementById("slot2");
+		if(slot1.firstChild)
+		{
+			slot1.firstElementChild.remove();
+		}
+		if(slot2.firstChild)
+		{
+			slot2.firstElementChild.remove();
+		}
+		if(eventDate.length > j)
+		{
+			slot1.appendChild(eventDate[j][1]);
+			j++;
+		}
+		if(eventDate.length > j)
+		{
+			while(eventDate[j] || j < eventDate.length)
+			{
+				if(eventDate[j][0].getDate() === date.getDate() && eventDate[j][0].getMonth() === date.getMonth() && eventDate[j][0].getFullYear() === date.getFullYear())
+				{
+					break;
+				}
+				j++;
+			}
+			if(eventDate.length > j)
+			{
+				slot2.appendChild(eventDate[j][1]);
+			}
+		}
+}
