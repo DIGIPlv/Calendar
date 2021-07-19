@@ -41,6 +41,7 @@ window.onload = function()
 	var selectedDate = today.getDate();
 	var selectedMonth = today.getMonth();
 	var selectedYear =  today.getFullYear();
+	hideSlot();
 	const renderCalendar = () =>
 	{
 		const month = date.getMonth();
@@ -293,4 +294,18 @@ function displayEvent(date)
 				slot2.appendChild(eventDate[j][1]);
 			}
 		}
+		hideSlot();
+}
+
+function hideSlot()
+{
+	let slot = document.getElementById("slot2");
+	if(slot.getElementsByClassName("empty-state-collection").length > 0 || !slot.firstElementChild)
+	{
+		slot.style.display = "none";
+	}
+	else
+	{
+		slot.style.display = "block";
+	}
 }
