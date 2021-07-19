@@ -300,12 +300,15 @@ function displayEvent(date)
 function hideSlot()
 {
 	let slot = document.getElementById("slot2");
-	if(slot.getElementsByClassName("empty-state-collection").length > 0 || !slot.firstElementChild)
+	if(slot.nextElementSibling && !slot.nextElementSibling.classList.contains("hidden"))
 	{
-		slot.style.display = "none";
-	}
-	else
-	{
-		slot.style.display = "block";
+		if(slot.getElementsByClassName("empty-state-collection").length > 0 || !slot.firstElementChild)
+		{
+			slot.style.display = "none";
+		}
+		else
+		{
+			slot.style.display = "block";
+		}
 	}
 }
