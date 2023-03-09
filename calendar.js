@@ -20,10 +20,10 @@ while(list[i])
 			repeateEventNode.getElementsByClassName("h5")[4].innerHTML = repeateDateSplit[2];
 			if(repeateDateSplit[3])
 			{
-				repeateEventNode.getElementsByClassName("h5")[5].innerHTML = repeateDateSplit[3];
+				repeateEventNode.getElementsByClassName("h5")[6].innerHTML = repeateDateSplit[3];
 			}
 			else{
-				repeateEventNode.getElementsByClassName("h5")[5].innerHTML = "";
+				repeateEventNode.getElementsByClassName("h5")[6].innerHTML = "";
 			}
 			eventDate.push([eventRepeateDate, repeateEventNode]);
 		});
